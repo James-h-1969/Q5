@@ -91,7 +91,7 @@ def get_new_cfg():
     four_a = []
     single_rules = []
 
-    new_Variables = []
+    new_Variables = ["S0"]
 
     for variable,terminal in final_variable:
         if variable != "S":
