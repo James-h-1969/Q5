@@ -53,16 +53,16 @@ def get_new_cfg():
                 index = i
                 next_index = (index + 1) % 5
                 if right_side[0] in final_variable:
-                    new_rule = (left_side + str(index), right_side[0], right_side[1] + str(next_index))
+                    new_rule = (left_side + str(index), (right_side[0], right_side[1] + str(next_index)))
                     new_Variables.append(left_side + str(index))
                     new_Variables.append(right_side[1] + str(next_index))
                 elif right_side[1] in final_variable:
-                    new_rule = (left_side + str(index), right_side[0] + str(next_index), right_side[1])
+                    new_rule = (left_side + str(index), (right_side[0] + str(next_index), right_side[1]))
                     new_Variables.append(left_side + str(index))
                     new_Variables.append(right_side[0] + str(next_index))
                 else:
                     # theres no Variable which derives to a
-                    new_rule = (left_side + str(index), right_side[0] + str(index) , right_side[1] + str(next_index))
+                    new_rule = (left_side + str(index), (right_side[0] + str(index) , right_side[1] + str(next_index)))
                     new_Variables.append(left_side + str(index))
                     new_Variables.append(right_side[1] + str(next_index))
                     new_Variables.append(right_side[0] + str(index))
