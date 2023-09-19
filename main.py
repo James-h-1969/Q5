@@ -193,7 +193,7 @@ def get_new_cfg():
                     if i == 4:
                         four_a.append(new_rule)
         else:
-            if left_side in [x[0] for x in final_variable]:
+            if left_side in [x[0] for x in final_variable] and left_side != "S":
                 new_rule = (left_side, right_side)  
             else:
                 new_rule = (left_side + str(0), right_side)
