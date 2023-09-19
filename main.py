@@ -53,13 +53,12 @@ A_N_B_N = {
 
 # S -> aSb | ε  ||| 
 # S -> T, T -> aSb | e ||| 
-# 
 
 
 def get_new_cfg():
     # read a CFG via stdin. See parser.py for details on the returned object
-    cfg = parse_cfg()
-    # cfg= A_STAR_B_STAR
+    # cfg = parse_cfg()
+    cfg= A_STAR_B_STAR
     rules_to_omit = []
     for rule in cfg["rules"]:
         left_side, right_side = rule
@@ -72,30 +71,13 @@ def get_new_cfg():
     for rule in rules_to_omit:
         cfg["rules"].remove(rule)
 
-
     # construct a new CFG, then output it to stdout.
     # find a rule where A -> a, X -> a, Y -> a
     final_variable = []
     for rule in cfg["rules"]:
         left_side, right_side = rule 
         if len(right_side) == 1:
-            # we need to check there are no other rules with that variable on the left
-            counter = 0
-            for new_rule in cfg["rules"]:
-                left, right = new_rule
-                if (left == left_side):
-                    counter += 1
-            if counter == 1:
-                final_variable.append((left_side, right_side[0]))
-            else:
-                # remove the rule going to one thing
-                for new_rule in cfg["rules"]:
-                        left, right = new_rule
-                        if (left == left_side):
-                            if (len(right_side)) == 1:
-                                index_of = cfg["rules"].index(rule)
-                                cfg["rules"][index_of] = (0,0) #we want to ignore
-        
+            final_variable.append((left_side, right_side[0])) 
 
     if final_variable == "":
         return cfg #if no rule then only accept 0 "a"'s -> SAME CFG as start
@@ -120,45 +102,67 @@ def get_new_cfg():
             continue
         # if the right side
         if len(right_side) == 2: #this means it doesnt go to a terminal
-            if left_side == "S":
-                dup_range = 1
-            else:
-                dup_range = 5
-            for i in range(dup_range): #we make five copies 
-                index = i
-                next_index = (index + 1) % 5
+            if left_side == right_side[0] or left_side == right_side[1]:
+                #case of recursion
+                if left_side == right_side[0] and left_side == right_side[1]: #case where they are all the same
+                    if checkDeriveToTerminalA(right_side[0], final_variable): #derives to an A
+                        for i in range(5):
+                            next_i = (i + 1) % 5
+                            new_rule = (right_side[0] + str(i), (right_side[0], right_side[0] + str(next_i)))
+                            single_rules.append(new_rule)
+                            new_Variables.append(right_side[0] + str(i))
+                        single_rules.append((right_side[0] + "0", tuple()))
+                        new_Variables.append(right_side[0] + "0")
+                    else: #does not derive  to A, eg. B -> BB
+                        single_rules.append(rule)
+
+            elif left_side == "S":
+                i = 0
+                # CASES: - one A, two A, one B, two B
+                if (checkDeriveToTerminalA(right_side[0], final_variable) and checkDeriveToTerminalA(right_side[1], final_variable)):
+                    single_rules.append(("S0", (right_side[0], right_side[1] + "1")))
+                elif (checkDeriveToTerminalA(right_side[0], final_variable)):
+                    if (right_side[1] in [x[0] for x in final_variable]):
+                        single_rules.append(("S0", (right_side[0]+"0", right_side[1])))
+                    else:
+                        single_rules.append(("S0", (right_side[0]+"0", right_side[1] + "")))
+                
             
-                if checkDerive(right_side[0], final_variable):
-                    if (index == 0):
-                        single_rules.append((left_side + str(index), tuple()))
-                    new_rule = (left_side + str(index), (right_side[0], right_side[1] + str(next_index)))
-                    new_Variables.append(left_side + str(index))
-                    new_Variables.append(right_side[1] + str(next_index))
-                elif checkDerive(right_side[1], final_variable):
-                    if (index == 0):
-                        single_rules.append((left_side + str(index), tuple()))
-                    new_rule = (left_side + str(index), (right_side[0] + str(next_index), right_side[1]))
-                    new_Variables.append(left_side + str(index))
-                    new_Variables.append(right_side[0] + str(next_index))
+            else:
+                for i in range(5): #we make five copies 
+                    index = i
+                    next_index = (index + 1) % 5
+                    if checkDeriveToTerminalA(right_side[0], final_variable): #check if there is an "a" in the right side
+                        if (index == 0):
+                            single_rules.append((left_side + str(index), tuple()))
+                        new_rule = (left_side + str(index), (right_side[0], right_side[1] + str(next_index)))
+                        new_Variables.append(left_side + str(index))
+                        new_Variables.append(right_side[1] + str(next_index))
+                    elif checkDeriveToTerminalA(right_side[1], final_variable): #check if there is an "a" in the right side
+                        if (index == 0):
+                            single_rules.append((left_side + str(index), tuple()))
+                        new_rule = (left_side + str(index), (right_side[0] + str(next_index), right_side[1]))
+                        new_Variables.append(left_side + str(index))
+                        new_Variables.append(right_side[0] + str(next_index))
 
-                else:
-                    if (right_side[0] in [x[0] for x in final_variable]): #if a B is in right side
-                        new_rule = (left_side + str(index), (right_side[0], right_side[1] + str(index)))
-                    elif (right_side[1] in [x[0] for x in final_variable]): 
-                        new_rule = (left_side + str(index), (right_side[0] + str(index) , right_side[1]))
-                    else: 
-                        new_rule = (left_side + str(index), (right_side[0] + str(index), right_side[1] + str(index)))                    
+                    else:
+                        if (right_side[0] in [x[0] for x in final_variable]): #if a B is in right side
+                            new_rule = (left_side + str(index), (right_side[0], right_side[1] + str(index)))
+                        elif (right_side[1] in [x[0] for x in final_variable]): 
+                            new_rule = (left_side + str(index), (right_side[0] + str(index) , right_side[1]))
+                        else: 
+                            new_rule = (left_side + str(index), (right_side[0] + str(index), right_side[1] + str(index)))                    
 
-                if i == 0:
-                    no_a.append(new_rule)
-                if i == 1:
-                    one_a.append(new_rule)
-                if i == 2:
-                    two_a.append(new_rule)
-                if i == 3:
-                    three_a.append(new_rule)
-                if i == 4:
-                    four_a.append(new_rule)
+                    if i == 0:
+                        no_a.append(new_rule)
+                    if i == 1:
+                        one_a.append(new_rule)
+                    if i == 2:
+                        two_a.append(new_rule)
+                    if i == 3:
+                        three_a.append(new_rule)
+                    if i == 4:
+                        four_a.append(new_rule)
         else:
             if left_side in [x[0] for x in final_variable]:
                 new_rule = (left_side, right_side)  
@@ -178,9 +182,15 @@ def get_new_cfg():
     return cfg
 
 
-def checkDerive(side, final_variable):
+def checkDeriveToTerminalA(side, final_variable):
     for variable, terminal in final_variable:
         if side == variable and terminal == "a":
+            return True
+    return False
+
+def checkDeriveToTerminal(side, final_variable):
+    for variable, terminal in final_variable:
+        if side == variable:
             return True
     return False
     
