@@ -57,8 +57,8 @@ A_N_B_N = {
 
 def get_new_cfg():
     # read a CFG via stdin. See parser.py for details on the returned object
-    cfg = parse_cfg()
-    # cfg= A_STAR_B_STAR
+    # cfg = parse_cfg()
+    cfg= A_N_B_N
     rules_to_omit = []
     for rule in cfg["rules"]:
         left_side, right_side = rule
@@ -202,6 +202,9 @@ def get_new_cfg():
                     new_rule = (left_side + str(0), right_side)
                     new_Variables.append(left_side + str(0))
                 single_rules.append(new_rule)
+            else:
+                if right_side == ():
+                    single_rules.append((left_side + str(0), right_side))
 
 
     new_Variables = sorted(list(set(new_Variables)), key=lambda x: x[0][0]) #removes duplicates 
