@@ -40,8 +40,8 @@ TEST_1 = {
 
 def get_new_cfg():
     # read a CFG via stdin. See parser.py for details on the returned object
-    # cfg = parse_cfg()
-    cfg= TEST_1
+    cfg = parse_cfg()
+    # cfg= TEST_1
     rules_to_omit = []
     for rule in cfg["rules"]:
         left_side, right_side = rule
