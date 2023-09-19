@@ -79,7 +79,9 @@ def get_new_cfg():
         else:
             new_rule = (left_side + str(0), right_side)  
 
+    
     cfg["rules"] = zip(no_a, one_a, two_a, three_a, four_a)
+    print(cfg["rules"])
     cfg["V"] = new_Variables
     cfg["start"] = "S0"
 
