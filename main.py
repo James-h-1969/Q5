@@ -18,23 +18,21 @@ S -> TA
 T -> AA 
 A -> a
 """
-
 A_STAR_B_STAR = {
-    "V" :['S','X', 'Y', 'A', 'B'],
+    "V" :['S', 'A', 'B'],
     "T" : ['a', 'b'],
     "start" : 'S',
-    "rules" : [('S', ('X', 'Y')),
-            ('S', ('A', 'X')),
-            ('S', ('B', 'Y')),
-            ('S', tuple()),
-            ('S', ('a',)),
-            ('S', ('b',)),
-            ('X', ('A', 'X')),
-            ('Y', ('B', 'Y')),
-            ('X', ('a',)),
-            ('Y', ('b',)),
-            ('A', ('a',)),
-            ('B', ('b',)),
+    "rules" : [('S', ('A', 'B')),
+               ('S', ('a', ) ),
+               ('S', ('b', ) ),
+                ('S', tuple()),
+                ('S', ('A','A')),
+                ('S', ('A','B')),
+                ('S', ('B','B')),
+                ('A', ('A','A')),
+                ('B', ('B','B')),
+                ('A', ('a', ) ),
+                ('B', ('b', ) )
             ]
 }
 
@@ -61,7 +59,7 @@ A_N_B_N = {
 def get_new_cfg():
     # read a CFG via stdin. See parser.py for details on the returned object
     cfg = parse_cfg()
-    # cfg= A_N_B_N
+    # cfg= A_STAR_B_STAR
     rules_to_omit = []
     for rule in cfg["rules"]:
         left_side, right_side = rule
@@ -144,13 +142,12 @@ def get_new_cfg():
                     new_Variables.append(right_side[0] + str(next_index))
 
                 else:
-                    if (right_side[0] in [x[0] for x in final_variable]):
+                    if (right_side[0] in [x[0] for x in final_variable]): #if a B is in right side
                         new_rule = (left_side + str(index), (right_side[0], right_side[1] + str(index)))
-                        new_Variables.append(right_side[0] + str(index))
-                    elif (right_side[1] in [x[0] for x in final_variable]):
+                    elif (right_side[1] in [x[0] for x in final_variable]): 
                         new_rule = (left_side + str(index), (right_side[0] + str(index) , right_side[1]))
-                        new_Variables.append(right_side[1] + str(index))
-                    new_Variables.append(left_side + str(index))                    
+                    else: 
+                        new_rule = (left_side + str(index), (right_side[0] + str(index), right_side[1] + str(index)))                    
 
                 if i == 0:
                     no_a.append(new_rule)
@@ -170,8 +167,9 @@ def get_new_cfg():
                 new_Variables.append(left_side + str(0))
             single_rules.append(new_rule)
 
-    new_Variables = list(set(new_Variables)) #removes duplicates 
-    rules = list(set(no_a + one_a + two_a + three_a + four_a + single_rules))
+
+    new_Variables = sorted(list(set(new_Variables)), key=lambda x: x[0][0]) #removes duplicates 
+    rules = sorted(list(set(no_a + one_a + two_a + three_a + four_a + single_rules)), key=lambda x: x[0][0])
     cfg["rules"] = rules
     cfg["V"] = new_Variables
     cfg["start"] = "S0"
