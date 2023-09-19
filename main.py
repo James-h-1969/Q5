@@ -116,6 +116,8 @@ def get_new_cfg():
                         new_Variables.append(right_side[0] + "0")
                     else: #does not derive  to A, eg. B -> BB
                         single_rules.append((left_side + "1", (right_side[0], right_side[1] + "1")))
+                        single_rules.append((left_side + "1", tuple()))
+
 
             elif left_side == "S":
                 i = 0
