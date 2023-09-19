@@ -40,8 +40,8 @@ TEST_1 = {
 
 def get_new_cfg():
     # read a CFG via stdin. See parser.py for details on the returned object
-    cfg = parse_cfg()
-    # cfg= TEST_1
+    # cfg = parse_cfg()
+    cfg= TEST_1
     rules_to_omit = []
     for rule in cfg["rules"]:
         left_side, right_side = rule
@@ -94,36 +94,41 @@ def get_new_cfg():
         left_side, right_side = rule 
         # if the right side 
         if len(right_side) == 2: #this means it doesnt go to a terminal
-            for i in range(5): #we make five copies
+            if left_side == "S":
+                dup_range = 1
+            else:
+                dup_range = 5
+            for i in range(dup_range): #we make five copies 
                 index = i
-                next_index = (index + 1) % 5
-               
-                if right_side[0] in final_variable:
-                    new_rule = (left_side + str(index), (right_side[0], right_side[1] + str(next_index)))
-                    new_Variables.append(left_side + str(index))
-                    new_Variables.append(right_side[1] + str(next_index))
-                elif right_side[1] in final_variable:
-                    new_rule = (left_side + str(index), (right_side[0] + str(next_index), right_side[1]))
-                    new_Variables.append(left_side + str(index))
-                    new_Variables.append(right_side[0] + str(next_index))
+                if left_side + str(index) in new_Variables or left_side == "S":
+                    next_index = (index + 1) % 5
+                
+                    if right_side[0] in final_variable:
+                        new_rule = (left_side + str(index), (right_side[0], right_side[1] + str(next_index)))
+                        new_Variables.append(left_side + str(index))
+                        new_Variables.append(right_side[1] + str(next_index))
+                    elif right_side[1] in final_variable:
+                        new_rule = (left_side + str(index), (right_side[0] + str(next_index), right_side[1]))
+                        new_Variables.append(left_side + str(index))
+                        new_Variables.append(right_side[0] + str(next_index))
 
-                else:
-                    # theres no Variable which derives to a
-                    new_rule = (left_side + str(index), (right_side[0] + str(index) , right_side[1] + str(index)))
-                    new_Variables.append(left_side + str(index))
-                    new_Variables.append(right_side[1] + str(index))
-                    new_Variables.append(right_side[0] + str(index))
+                    else:
+                        # theres no Variable which derives to a
+                        new_rule = (left_side + str(index), (right_side[0] + str(index) , right_side[1] + str(index)))
+                        new_Variables.append(left_side + str(index))
+                        new_Variables.append(right_side[1] + str(index))
+                        new_Variables.append(right_side[0] + str(index))
 
-                if i == 0:
-                    no_a.append(new_rule)
-                if i == 1:
-                    one_a.append(new_rule)
-                if i == 2:
-                    two_a.append(new_rule)
-                if i == 3:
-                    three_a.append(new_rule)
-                if i == 4:
-                    four_a.append(new_rule)
+                    if i == 0:
+                        no_a.append(new_rule)
+                    if i == 1:
+                        one_a.append(new_rule)
+                    if i == 2:
+                        two_a.append(new_rule)
+                    if i == 3:
+                        three_a.append(new_rule)
+                    if i == 4:
+                        four_a.append(new_rule)
         else:
             if left_side in final_variable:
                 new_rule = (left_side, right_side)  
