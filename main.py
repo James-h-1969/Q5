@@ -57,8 +57,9 @@ A_N_B_N = {
 
 def get_new_cfg():
     # read a CFG via stdin. See parser.py for details on the returned object
-    cfg = parse_cfg()
-    # cfg= A_N_B_N
+    # cfg = parse_cfg()
+    cfg= A_STAR_B_STAR
+
     rules_to_omit = []
     for rule in cfg["rules"]:
         left_side, right_side = rule
@@ -67,7 +68,6 @@ def get_new_cfg():
                 pass
             else:
                 rules_to_omit.append(rule)
-
     for rule in rules_to_omit:
         cfg["rules"].remove(rule)
 
@@ -195,7 +195,7 @@ def get_new_cfg():
                     if i == 4:
                         four_a.append(new_rule)
         else:
-            if left_side != "S" and right_side != "a":
+            if left_side != "S" and right_side[0] != "a":
                 if left_side in [x[0] for x in final_variable]:
                     new_rule = (left_side, right_side)  
                 else:
@@ -203,7 +203,10 @@ def get_new_cfg():
                     new_Variables.append(left_side + str(0))
                 single_rules.append(new_rule)
             else:
-                if right_side == ():
+                if (len(right_side) == 1):
+                    if  right_side[0] != "a":
+                        single_rules.append((left_side + str(0), right_side))
+                elif right_side != "a":
                     single_rules.append((left_side + str(0), right_side))
 
 
