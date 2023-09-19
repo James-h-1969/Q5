@@ -195,12 +195,13 @@ def get_new_cfg():
                     if i == 4:
                         four_a.append(new_rule)
         else:
-            if left_side in [x[0] for x in final_variable] and left_side != "S":
-                new_rule = (left_side, right_side)  
-            else:
-                new_rule = (left_side + str(0), right_side)
-                new_Variables.append(left_side + str(0))
-            single_rules.append(new_rule)
+            if left_side != "S" and right_side != "a":
+                if left_side in [x[0] for x in final_variable]:
+                    new_rule = (left_side, right_side)  
+                else:
+                    new_rule = (left_side + str(0), right_side)
+                    new_Variables.append(left_side + str(0))
+                single_rules.append(new_rule)
 
 
     new_Variables = sorted(list(set(new_Variables)), key=lambda x: x[0][0]) #removes duplicates 
