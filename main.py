@@ -57,8 +57,8 @@ A_N_B_N = {
 
 def get_new_cfg():
     # read a CFG via stdin. See parser.py for details on the returned object
-    # cfg = parse_cfg()
-    cfg= A_STAR_B_STAR
+    cfg = parse_cfg()
+    # cfg= A_STAR_B_STAR
     rules_to_omit = []
     for rule in cfg["rules"]:
         left_side, right_side = rule
