@@ -94,7 +94,8 @@ def get_new_cfg():
     new_Variables = []
 
     for variable,terminal in final_variable:
-        new_Variables.append(variable)
+        if variable != "S":
+            new_Variables.append(variable)
 
     for rule in cfg["rules"]:
         left_side, right_side = rule 
@@ -140,11 +141,12 @@ def get_new_cfg():
                         single_rules.append(("S0", (right_side[0]+"1", right_side[1]+extra)))
                     else:
                         single_rules.append(("S0", (right_side[0]+"1", right_side[1]+extra)))
+                    new_Variables.append(right_side[0]+"1")
 
                 ## CASES OF TWO BS ##
                 elif (checkDeriveToTerminal(right_side[0], final_variable) and checkDeriveToTerminal(right_side[1], final_variable)): #boths Bs
                         single_rules.append(("S0", (right_side[0], right_side[1] + "1")))
-                
+                        new_Variables.append(right_side[0]+"1")
                 ## case of ONE BS
                 elif (checkDeriveToTerminal(right_side[0], final_variable)): #one B
                         single_rules.append(("S0", (right_side[0], right_side[1] + "0")))
