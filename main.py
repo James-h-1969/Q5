@@ -58,7 +58,7 @@ A_N_B_N = {
 def get_new_cfg():
     # read a CFG via stdin. See parser.py for details on the returned object
     # cfg = parse_cfg()
-    cfg= A_STAR_B_STAR
+    cfg= A_N_B_N
     rules_to_omit = []
     for rule in cfg["rules"]:
         left_side, right_side = rule
@@ -114,18 +114,47 @@ def get_new_cfg():
                         single_rules.append((right_side[0] + "0", tuple()))
                         new_Variables.append(right_side[0] + "0")
                     else: #does not derive  to A, eg. B -> BB
-                        single_rules.append(rule)
+                        single_rules.append((left_side + "1", right_side))
 
             elif left_side == "S":
                 i = 0
                 # CASES: - one A, two A, one B, two B
+                
+                ## CASE OF TWO AS ##
+                two_as = isTwoAs(cfg["rules"], final_variable)
                 if (checkDeriveToTerminalA(right_side[0], final_variable) and checkDeriveToTerminalA(right_side[1], final_variable)):
                     single_rules.append(("S0", (right_side[0], right_side[1] + "1")))
+                
+                ## CASES OF ONE AS  ##
                 elif (checkDeriveToTerminalA(right_side[0], final_variable)):
-                    if (right_side[1] in [x[0] for x in final_variable]):
-                        single_rules.append(("S0", (right_side[0]+"0", right_side[1])))
+                    if two_as:
+                        extra = "0"
                     else:
-                        single_rules.append(("S0", (right_side[0]+"0", right_side[1] + "")))
+                        extra = ""
+                    if (checkDeriveToTerminal(right_side[1], final_variable)):
+                        single_rules.append(("S0", (right_side[0]+extra, right_side[1]+"1")))
+                    else:
+                        single_rules.append(("S0", (right_side[0]+extra, right_side[1] + "1")))
+                elif (checkDeriveToTerminalA(right_side[1], final_variable)):
+                    if (checkDeriveToTerminal(right_side[0], final_variable)):
+                        single_rules.append(("S0", (right_side[0]+"1", right_side[1]+extra)))
+                    else:
+                        single_rules.append(("S0", (right_side[0]+"1", right_side[1]+extra)))
+
+                ## CASES OF TWO BS ##
+                elif (checkDeriveToTerminal(right_side[0], final_variable) and checkDeriveToTerminal(right_side[1], final_variable)): #boths Bs
+                        single_rules.append(("S0", (right_side[0], right_side[1] + "1")))
+                
+                ## case of ONE BS
+                elif (checkDeriveToTerminal(right_side[0], final_variable)): #one B
+                        single_rules.append(("S0", (right_side[0], right_side[1] + "0")))
+                elif (checkDeriveToTerminal(right_side[1], final_variable)): #one B
+                        single_rules.append(("S0", (right_side[0] + "0", right_side[1])))
+
+                else:
+                    single_rules.append(("S0", (right_side[0] + "0", right_side[1] + "0")))
+
+                    
                 
             
             else:
@@ -180,6 +209,14 @@ def get_new_cfg():
 
 
     return cfg
+
+def isTwoAs(rules, final_variables):
+    variable_A = ""
+    for variable, terminal in final_variables:
+        if terminal == "a":
+            variable_A = variable
+    return ((variable_A, (variable_A, variable_A)) in rules)
+        
 
 
 def checkDeriveToTerminalA(side, final_variable):
