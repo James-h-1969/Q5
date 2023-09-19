@@ -77,7 +77,7 @@ def get_new_cfg():
                 if i == 4:
                     four_a.append(new_rule)
         else:
-            new_rule = (left_side + str(0), right_side)  
+            new_rule = (left_side + str(0), right_side[0])  
 
     
     cfg["rules"] = no_a + one_a + two_a + three_a + four_a
