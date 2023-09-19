@@ -80,8 +80,7 @@ def get_new_cfg():
             new_rule = (left_side + str(0), right_side)  
 
     
-    cfg["rules"] = zip(no_a, one_a, two_a, three_a, four_a)
-    print(cfg["rules"])
+    cfg["rules"] = no_a + one_a + two_a + three_a + four_a
     cfg["V"] = new_Variables
     cfg["start"] = "S0"
 
